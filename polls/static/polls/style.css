@@ -1,0 +1,25 @@
+li a {
+  color: white;
+  font-weight: bold;
+  font-family: "Courier New", Courier, monospace;
+}
+h1,
+li,
+form {
+  color: white;
+  font-weight: bold;
+  font-family: "Courier New", Courier, monospace;
+}
+body {
+  background: white url("images/django_background.webp") fixed;
+}
+.vote_button {
+  margin: 20px;
+}
+.vote_again_button {
+  border: 2px solid white;
+  border-radius: 5px;
+  background-color: aliceblue;
+  color: black;
+  font-family: "Courier New", Courier, monospace;
+}
