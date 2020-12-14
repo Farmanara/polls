@@ -10,9 +10,10 @@
   + studied django tutorial docs and created the polls app
   + did [Django Rest Framework](https://www.django-rest-framework.org/) tutorial part 1 and got familiar with [Serialization](https://www.django-rest-framework.org/tutorial/1-serialization/)
   + mapped the structure of the serialization to the polls app, it current can show some data in json format on 'polls/api/' path
+  + replaced generic views with viewsets
   
   
-#### (probable)Todo:
-  + Review
-  + study [Django Rest Framework](https://www.django-rest-framework.org/) tutorial part to get familiar with [Request and Responses](https://www.django-rest-framework.org/tutorial/2-requests-and-responses/)
   
+#### Todo:
+  + because the viewsets replacement I blew up the html renderer, browsable api is now viewable at root address, but the Polls app html cannot be rendered
+  . need to figure out how unify them in the same url
