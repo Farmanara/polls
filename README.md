@@ -16,4 +16,4 @@
   
 #### Todo:
   + because the viewsets replacement I blew up the html renderer, browsable api is now viewable at root address, but the Polls app html cannot be rendered
-  . need to figure out how unify them in the same url
+  . need to figure out how to unify them in the same url
