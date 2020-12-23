@@ -19,20 +19,29 @@ class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
 
     def list(self, request):
         response = super().list(request)
+        # all we need is to add tempalte_name in the response in this case
+        # normally you'de have more complex requirements
         response.template_name = 'polls/index.html'
         return response
 
     def retrieve(self, request, pk=None, format=None):
         response = super().retrieve(request)
+        # all we need is to add tempalte_name in the response in this case
+        # normally you'de have more complex requirements
         response.template_name = 'polls/detail.html'
         return response
 
+    # the serializer_class validates the submitted data for us, we know we'll 
+    # have data['choice'] as an integer from the VoteSerializer
     @action(detail=True, methods=['post'], serializer_class=VoteSerializer)
     def vote(self, request, pk=None, format=None):
         question = self.get_object()
         try:
             selected_choice = question.choice_set.get(pk=request.data['choice'])
         except (KeyError, Choice.DoesNotExist):
+            # when using the same view for html and json, you'll have to have
+            # conditions like this, giving slightly different responses 
+            # depending on the format
             if format == 'html':
                 return render(request, 'polls/detail.html', {
                     'question': question,
