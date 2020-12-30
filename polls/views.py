@@ -1,24 +1,56 @@
-# from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
+from django.http import HttpResponseRedirect,HttpResponse,JsonResponse
 # from django.views.decorators.csrf import csrf_exempt
 # from rest_framework.parsers import JSONParser
 # from polls.serializers import QuestionSerializer
 # from django.shortcuts import get_object_or_404, render
-# from django.urls import reverse
+from django.urls import reverse
 # from django.views import generic
 # from django.utils import timezone
 from .models import Choice, Question
-from rest_framework import viewsets
-from .serializers import QuestionSerializer
+from rest_framework import viewsets, serializers
+from .serializers import QuestionSerializer, ChoiceSerializer, VoteSerializer, ResultSerializer
+from rest_framework import renderers
+from rest_framework.response import Response
+from rest_framework.decorators import action
 
-
-
-class QuestionViewSet(viewsets.ModelViewSet):
+class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset=Question.objects.all()
-    serializer_class= QuestionSerializer
+    serializer_class = QuestionSerializer
 
+    def list(self, request):
+        response = super().list(request)
+        # all we need is to add tempalte_name in the response in this case
+        # normally you'de have more complex requirements
+        response.template_name = 'polls/index.html'
+        return response
 
+    def retrieve(self, request, pk=None, format=None):
+        response = super().retrieve(request)
+        # all we need is to add tempalte_name in the response in this case
+        # normally you'de have more complex requirements
+        response.template_name = 'polls/detail.html'
+        return response
 
+    # the serializer_class validates the submitted data for us, we know we'll 
+    # have data['choice'] as an integer from the VoteSerializer
+    @action(detail=True, methods=['post'], serializer_class=VoteSerializer)
+    def vote(self, request, pk=None, format=None):
+        question = self.get_object()
+        try:
+            selected_choice = question.choice_set.get(pk=request.data['choice'])
+        except (KeyError, Choice.DoesNotExist):
+            # when using the same view for html and json, you'll have to have
+            # conditions like this, giving slightly different responses 
+            # depending on the format
+            if format == 'html':
+                return render(request, 'polls/detail.html', {
+                    'question': question,
+                    'error_message': "You didn't select a choice."})
+            raise serializers.ValidationError("You didn't select a choice.")
 
+        selected_choice.votes += 1
+        selected_choice.save()
+        return Response(ResultSerializer(question, context={'request': request}).data, template_name='polls/results.html')
 
 
 
